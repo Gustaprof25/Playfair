@@ -1,0 +1,20 @@
+image: composer:2.0
+
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: deploy to srv
+            runs-on:
+              - 'self.hosted'
+            script:
+                - pipe: atlassian/sftp-deploy:0.5.8
+                  variables:
+                    USER: 'kube'
+                    SERVER: '10.2.0.207'
+                    REMOTE_PATH: '/data/$BITBUCKET_REPO_FULL_NAME/'
+                    LOCAL_PATH: '${BITBUCKET_CLONE_DIR}/*'
+                    PASSWORD: $pwd_dpl
+                    EXTRA_ARGS: -o StrictHostKeyChecking=no -r
+                    #SSH_KEY: $SSH_KEY
+                    DEBUG: 'true'
